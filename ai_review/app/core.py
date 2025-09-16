@@ -10,7 +10,7 @@ SYSTEM_PROMPT = (
    "Output only valid JSON with keys: label ('Responsive'|'Not Responsive'|'Needs Review') and rationale (short explanation)."
 )
 USER_TEMPLATE = "CASE BACKGROUND:\n{case}\n\nDOCUMENT:\n{doc}"
-MAX_DOC_CHARS = 20_000
+MAX_DOC_CHARS = 100_000
 CHUNK_CHARS = 6_000
 def chunk_text(text: str, chunk: int = CHUNK_CHARS) -> List[str]:
    text = (text or "")[:MAX_DOC_CHARS]
