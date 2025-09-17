@@ -1,3 +1,5 @@
 ollama
 fastapi
 uvicorn[standard]
+pyodbc
+pandas
