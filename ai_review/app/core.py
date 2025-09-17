@@ -16,7 +16,8 @@ def chunk_text(text: str, chunk: int = CHUNK_CHARS) -> List[str]:
    text = (text or "")[:MAX_DOC_CHARS]
    return [text[i:i+chunk] for i in range(0, len(text), chunk)] or [""]
 def parse_jsonish(s: str) -> Dict:
-   m = re.search(r"\{.*\}", s, re.DOTALL)
+   m=re.sub(r"<think>[\s\S]*?</think>", "", s, flags=re.IGNORECASE)
+   m = re.search(r"\{.*\}", m, re.DOTALL)
    try:
        return json.loads(m.group(0) if m else s)
    except Exception:
