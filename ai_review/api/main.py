@@ -5,7 +5,7 @@ from app.models import EnsembleReviewer
 from app.providers.ollama_client import OllamaClient
 from pydantic import BaseModel
 from typing import Dict, Any
-from app.eca_rag.engine import ECARAG
+# from app.ECA.engine import ECARAG
 app = FastAPI(title="Responsiveness & ECA API", version="0.3.0")
 MODEL_DEFAULTS = ["gemma3n:e4b", "llama3.2:3b", "qwen3:4b"]
 # ---------- Health & Config ----------
