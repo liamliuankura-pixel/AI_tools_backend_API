@@ -1,5 +1,6 @@
 from typing import List, Dict, Tuple
 import re, json
+
 SYSTEM_PROMPT = (
    "You are an eDiscovery responsiveness reviewer.\n"
    "Decide if the provided document is RESPONSIVE to the case background.\n"
@@ -12,9 +13,11 @@ SYSTEM_PROMPT = (
 USER_TEMPLATE = "CASE BACKGROUND:\n{case}\n\nDOCUMENT:\n{doc}"
 MAX_DOC_CHARS = 100_000
 CHUNK_CHARS = 6_000
+
 def chunk_text(text: str, chunk: int = CHUNK_CHARS) -> List[str]:
    text = (text or "")[:MAX_DOC_CHARS]
    return [text[i:i+chunk] for i in range(0, len(text), chunk)] or [""]
+
 def parse_jsonish(s: str) -> Dict:
    m=re.sub(r"<think>[\s\S]*?</think>", "", s, flags=re.IGNORECASE)
    m = re.search(r"\{.*\}", m, re.DOTALL)
@@ -22,6 +25,7 @@ def parse_jsonish(s: str) -> Dict:
        return json.loads(m.group(0) if m else s)
    except Exception:
        return {"label": "Needs Review", "rationale": f"Parse error: {s[:200]}"}
+   
 def normalize_label(label: str) -> str:
    low = (label or "").strip().lower()
    if low in {"responsive", "relevant"}:
@@ -29,6 +33,7 @@ def normalize_label(label: str) -> str:
    if low in {"not responsive", "non-responsive", "irrelevant", "not relevant"}:
        return "Not Responsive"
    return "Needs Review"
+
 def majority_vote(labels: List[str]) -> str:
    counts = {"Responsive": 0, "Not Responsive": 0, "Needs Review": 0}
    for l in labels:

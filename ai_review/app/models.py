@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 from abc import ABC, abstractmethod
 from .core import SYSTEM_PROMPT, USER_TEMPLATE, parse_jsonish, normalize_label, majority_vote, chunk_text
+
 class ModelClient(ABC):
    @abstractmethod
    def classify(self, model_name: str, case_text: str, doc_text: str) -> Dict[str, str]:
@@ -8,6 +9,7 @@ class ModelClient(ABC):
    @abstractmethod
    def generate(self, model_name: str, prompt: str) -> str:
        ...
+
 class EnsembleReviewer:
    """
    Modes:
@@ -17,6 +19,7 @@ class EnsembleReviewer:
    """
    def __init__(self, model_client: ModelClient):
        self.client = model_client
+
    # ---------- SINGLE ----------
    def review_doc_single(self, model_name: str, case_text: str, doc_text: str) -> Dict:
        labels, rats = [], []
@@ -26,6 +29,7 @@ class EnsembleReviewer:
            rats.append(out.get("rationale", ""))
        final = majority_vote(labels)
        return {"final": final, "votes": {model_name: final}, "rationales": {model_name: " | ".join(rats[:2])}}
+   
    # ---------- ENSEMBLE ----------
    def review_doc_ensemble(self, model_names: List[str], case_text: str, doc_text: str) -> Dict:
        model_votes, model_rats = {}, {}
@@ -40,6 +44,7 @@ class EnsembleReviewer:
            model_rats[m] = " | ".join(rats[:2])
        final = majority_vote(list(model_votes.values()))
        return {"final": final, "votes": model_votes, "rationales": model_rats}
+   
    # ---------- COLLAB ----------
    def review_doc_collab(
        self,
@@ -86,6 +91,7 @@ class EnsembleReviewer:
            "arbiter": arbiter,
            "arbiter_rationale": final_rat
        }
+   
 def _format_panel(case_text: str, doc_text: str, proposals: Dict[str, Dict[str, str]]) -> str:
    props = "\n".join([f"- {m}: {p['label']} — {p['rationale']}" for m, p in proposals.items()])
    return (
@@ -93,12 +99,14 @@ def _format_panel(case_text: str, doc_text: str, proposals: Dict[str, Dict[str, 
        f"DOCUMENT:\n{doc_text[:4000]}\n\n"
        f"CURRENT PANEL:\n{props}\n"
    )
+
 _CRITIQUE_PROMPT = (
    "You are collaborating with other reviewers. Given the PANEL below, respond with a JSON of your "
    "revised judgment: {\"label\":\"Responsive|Not Responsive|Needs Review\", \"rationale\":\"...\"}. "
    "If peers present strong evidence that contradicts you, adjust your label. Keep rationale concise.\n\n"
    "{panel}"
 )
+
 _ARBITER_PROMPT = (
    "Act as an impartial ARBITER. Read the PANEL and choose the most defensible final label for responsiveness. "
    "Return JSON: {\"label\":\"Responsive|Not Responsive|Needs Review\", \"rationale\":\"short reason citing evidence\"}.\n\n"
