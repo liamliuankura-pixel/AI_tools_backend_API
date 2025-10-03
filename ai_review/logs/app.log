@@ -1,0 +1,10 @@
+2025-09-29 16:50:06,578 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 16:50:15,350 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 16:56:24,814 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 16:56:33,802 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 17:00:21,880 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 17:00:21,884 [INFO] ai_review.api.main - Review output for a.txt: {'final': 'Responsive', 'votes': {'gemma3n:e4b': 'Responsive', 'llama3.2:3b': 'Responsive', 'qwen3:4b': 'Responsive'}, 'rationales': {'gemma3n:e4b': "The document discusses pricing strategy, specifically 'pricing floors,' which directly relates to widget pricing.", 'llama3.2:3b': 'The document discusses pricing, which is related to the issues described in the background regarding widget pricing strategy.', 'qwen3:4b': 'Document discusses pricing floors, a critical component of pricing strategy, and the case context explicitly relates to widget pricing strategy, making it materially responsive.'}}
+2025-09-29 17:00:34,229 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 17:00:42,835 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 17:01:17,898 [INFO] httpx - HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2025-09-29 17:01:17,900 [INFO] ai_review.api.main - Review output for b.txt: {'final': 'Not Responsive', 'votes': {'gemma3n:e4b': 'Not Responsive', 'llama3.2:3b': 'Not Responsive', 'qwen3:4b': 'Not Responsive'}, 'rationales': {'gemma3n:e4b': 'A holiday party invite does not relate to widget pricing strategy.', 'llama3.2:3b': 'The document does not contain any information about widget pricing strategy, only an invitation to a holiday party.', 'qwen3:4b': 'The holiday party invite does not discuss widget pricing strategy and is unrelated to the case background.'}}
