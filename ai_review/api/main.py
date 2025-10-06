@@ -23,8 +23,10 @@ from app.providers.ollama_client import OllamaClient
 from pydantic import BaseModel
 from typing import Dict, Any
 
-# from app.ECA.engine import ECARAG
+from app.ECA.routes import router as eca_router
+
 app = FastAPI(title="Responsiveness & ECA API", version="0.3.0")
+app.include_router(eca_router)
 MODEL_DEFAULTS = ["gemma3n:e4b", "llama3.2:3b", "qwen3:4b"]
 # ---------- Health & Config ----------
 @app.get("/health")
@@ -66,49 +68,5 @@ def review(req: ReviewRequest):
                                      votes=out["votes"], rationales=out["rationales"]))
     
     return ReviewResponse(results=results)
-# ---------- ECA / RAG ----------
-# ECA = ECARAG(gen_model="gemma3n:e4b", embed_model="nomic-embed-text")
-# class IngestDoc(BaseModel):
-#     id: str
-#     text: str
-#     meta: Optional[Dict[str, Any]] = None
-# class IngestRequest(BaseModel):
-#     docs: List[IngestDoc]
-# class QueryRequest(BaseModel):
-#     query: str
-#     k: int = 5
-# class SummaryRequest(BaseModel):
-#     case_background: str
-#     query: str
-#     k: int = 6
-# @app.post("/eca/ingest")
-# def eca_ingest(req: IngestRequest):
-#     return ECA.ingest_docs([d.model_dump() for d in req.docs])
-# @app.post("/eca/query")
-# def eca_query(req: QueryRequest):
-#     hits = ECA.retrieve(req.query, k=req.k)
-#     return {"results": [{"id": h["id"], "score": h["score"], "meta": h["meta"]} for h in hits]}
-# @app.post("/eca/summary")
-# def eca_summary(req: SummaryRequest):
-#     return ECA.summarize(req.case_background, req.query, k=req.k)
-# from typing import List, Optional, Dict
-# from pydantic import BaseModel, Field
-# class DocInput(BaseModel):
-#     filename: str
-#     text: str
-# class ReviewRequest(BaseModel):
-#     mode: str = Field(default="ensemble", description="'single' | 'ensemble' | 'collab'")
-#     case_background: str
-#     docs: List[DocInput]
-#     # for 'single'
-#     model_name: Optional[str] = None
-#     # for 'ensemble' / 'collab'
-#     model_names: Optional[List[str]] = None
-# class DocResult(BaseModel):
-#     filename: str
-#     final_label: str
-#     votes: Dict[str, str]
-#     rationales: Dict[str, str]
-# class ReviewResponse(BaseModel):
-#     results: List[DocResult]
- 
+
+
