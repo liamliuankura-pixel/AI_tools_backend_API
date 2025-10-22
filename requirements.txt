@@ -1,0 +1,9 @@
+ollama
+fastapi
+uvicorn[standard]
+pyodbc
+pandas
+pydantic
+typing_extensions
+python-multipart
+requests
