@@ -2,16 +2,22 @@ from fastapi import APIRouter, HTTPException
 from app.eca.schemas import IndexRequest, QueryRequest
 from app.eca.config import cfg
 from app.eca.ingest import index_folder
-from app.eca.lightrag_bootstrap import get_rag
+from app.eca.lightrag_bootstrap import get_rag, make_llm
 router = APIRouter(prefix="/eca", tags=["eca"])
 @router.get("/health")
 def health():
    return {
        "status": "ok",
-       "llm_model": cfg.LLM_MODEL,
-       "embed_model": cfg.EMBED_MODEL,
        "working_dir": str(cfg.WORKING_DIR),
-       "retrieval_mode": cfg.RETRIEVAL_MODE
+       "embed_model": cfg.EMBED_MODEL,
+       "embed_dim": cfg.EMBED_DIM,
+       "default_retrieval_mode": cfg.RETRIEVAL_MODE,
+       "models": {
+           "base": cfg.BASE_LLM_MODEL,
+           "sum": cfg.SUM_LLM_MODEL,
+           "expert": cfg.EXPERT_LLM_MODEL,
+       },
+       "num_ctx": cfg.OLLAMA_NUM_CTX
    }
 @router.post("/index")
 def index_docs(req: IndexRequest):
@@ -24,13 +30,12 @@ def index_docs(req: IndexRequest):
 def query(req: QueryRequest):
    rag = get_rag()
    mode = (req.mode or cfg.RETRIEVAL_MODE).lower()
-   # LightRAG has several modes; keep the switch explicit
+   # temporarily override the LLM used for this query
+   rag.llm_model_func = make_llm(req.model_role or "base")
    if mode == "naive":
-       answer = rag.query(req.question, retrieval_strategy="naive")
+       out = rag.query(req.question, retrieval_strategy="naive", top_k=req.top_k)
    elif mode == "local":
-       answer = rag.query(req.question, retrieval_strategy="local")
+       out = rag.query(req.question, retrieval_strategy="local", top_k=req.top_k)
    else:
-       # default/global (graph-augmented)
-       answer = rag.query(req.question, retrieval_strategy="global")
-   # answer is usually a dict/string per LightRAG; normalize to str
-   return {"mode": mode, "answer": str(answer)}
+       out = rag.query(req.question, retrieval_strategy="global", top_k=req.top_k)
+   return {"mode": mode, "model_role": req.model_role or "base", "answer": str(out)}
