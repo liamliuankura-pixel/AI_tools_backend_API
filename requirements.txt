@@ -8,3 +8,4 @@ typing_extensions
 python-multipart
 requests
 app
+numpy
